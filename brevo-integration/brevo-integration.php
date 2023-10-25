@@ -6,8 +6,8 @@ Version: 1.0
 Author: Super0312
 */
 
-// Include the Brevo API SDK
-require_once(__DIR__ . '/vendor/autoload.php');
+// Include Composer's autoloader
+require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
 
 
 // Step 1: Define the plugin settings
@@ -47,8 +47,10 @@ function brevo_integration_settings_form() {
 
 // contact integration.
 function brevo_integration($order_id) {
-    // Get the API key from the wp-config.php file
-    $api_key = defined('BREVO_API_KEY') ? BREVO_API_KEY : 'YOUR_API_KEY';
+    // Get the API key from the settings
+    $api_key = get_option('brevo_api_key');
+    // Get the Contact List ID from the settings
+    $contact_list_id = get_option('brevo_contact_list_id');
 
     // Configure API key authorization
     $config = SendinBlue\Client\Configuration::getDefaultConfiguration()->setApiKey('api-key', $api_key);
@@ -76,7 +78,7 @@ function brevo_integration($order_id) {
     ];
     $createContact->setAttributes($attributes);
 
-    $createContact->setListIds([10]);
+    $createContact->setListIds([contact_list_id]);
     $createContact->setEmailBlacklisted(false);
     $createContact->setSmsBlacklisted(false);
     $createContact->setUpdateEnabled(false);
